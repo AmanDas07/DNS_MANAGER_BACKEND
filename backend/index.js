@@ -6,6 +6,8 @@ import path from 'path';
 import dotenv from 'dotenv'
 import morgan from 'morgan';
 import { fileURLToPath } from 'url';
+import authController from './DNS_Controller/authController.js'
+import dnsController from './DNS_Controller/dnsController.js'
 dotenv.config();
 
 const app = express();
@@ -25,14 +27,8 @@ const connection = async () => {
 }
 connection();
 
-const routesDirectory = './DNS_Routes';
-
-fs.readdirSync(routesDirectory)
-    .map(fileName => {
-        const routePath = path.join(routesDirectory, fileName);
-        import('./' + routePath)
-            .then(module => app.use('/api', module.default || module));
-    });
+app.use('/auth', authController);
+app.use('/dns', dnsController);
 
 /*app.use(express.static(path.join(__dirname, './client/build')))
 

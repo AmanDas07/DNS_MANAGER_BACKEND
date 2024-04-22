@@ -1,7 +1,12 @@
 import jwt from "jsonwebtoken";
 import { comparePassword, hashed } from "../utils/helpers.js";
 import userModel from "../models/userModel.js"
-export const registerController = async (request, response) => {
+import express from "express";
+import { requireSignin } from "../middlewares/page.js"
+
+const router = express.Router();
+
+router.post("/Login", async (request, response) => {
 
     const name = request.body.name;
     const email = request.body.email;
@@ -62,8 +67,8 @@ export const registerController = async (request, response) => {
 
 
 }
-
-export const loginController = async (request, response) => {
+)
+router.post("/Register", async (request, response) => {
 
     const email = request.body.email;
     const password = request.body.password;
@@ -98,9 +103,9 @@ export const loginController = async (request, response) => {
 
 
 
-}
+})
 
-export const currentUserController = async (req, res) => {
+router.get("/currentuser", requireSignin, async (req, res) => {
 
     try {
 
@@ -115,8 +120,8 @@ export const currentUserController = async (req, res) => {
         return res.status(400).json(error);
     }
 }
-
-export const passwordResetController = async (request, response) => {
+)
+router.post("/forgotPassword", async (request, response) => {
 
     const email = request.body.email;
     const newPassword = request.body.newPassword;
@@ -141,4 +146,4 @@ export const passwordResetController = async (request, response) => {
         return res.status(400).send("Somthing Went Wrong");
     }
 
-}
+})

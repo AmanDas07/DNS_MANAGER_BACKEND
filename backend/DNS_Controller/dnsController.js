@@ -2,6 +2,10 @@ import { DnsManagementClient } from '@azure/arm-dns';
 import { ClientSecretCredential } from '@azure/identity';
 import { DefaultAzureCredential } from '@azure/identity';
 import axios from 'axios';
+import express from "express";
+import { requireSignin } from "../middlewares/page.js"
+
+const router = express.Router();
 const tenantId = process.env.AZURE_TENANT_ID;
 const clientId = process.env.AZURE_CLIENT_ID;
 const clientSecret = process.env.AZURE_PASSWORD;
@@ -9,8 +13,7 @@ const subscriptionId = process.env.AZURE_SUBSCRIPTION_ID;
 const resourceGroup = process.env.AZURE_RESOURCE_GROUP;
 const dnsZoneName = process.env.DNS_ZONE;
 
-
-export const getDnsRecordsForDomain = async (req, res) => {
+router.post("/verifyDomain", requireSignin, async (req, res) => {
     try {
         const { domainName } = req.body;
 
@@ -64,10 +67,10 @@ export const getDnsRecordsForDomain = async (req, res) => {
         console.error('Error retrieving DNS records:', error);
         return res.status(500).json({ error: 'Failed to retrieve DNS records', details: error.message });
     }
-};
+});
 
 
-export const updateARecord = async (req, res) => {
+router.post("/updateARecord", async (req, res) => {
     try {
         const { domainName, recordSetName } = req.body;
         if (!domainName) {
@@ -97,11 +100,11 @@ export const updateARecord = async (req, res) => {
         console.error('Failed to update A Record:', error);
         return res.status(500).json({ error: 'Failed to update A Record', details: error.message });
     }
-};
+});
 
 
 
-export const updateAAAARecord = async (req, res) => {
+router.post("/updateAAAARecord", async (req, res) => {
     try {
         const { domainName, recordSetName, ipv6Address } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -121,9 +124,9 @@ export const updateAAAARecord = async (req, res) => {
         console.error('Failed to update AAAA Record:', error);
         return res.status(500).json({ error: 'Failed to update AAAA Record', details: error.message });
     }
-};
+});
 
-export const updateCNAMERecord = async (req, res) => {
+router.post("/updateCNAMERecord", async (req, res) => {
     try {
         const { domainName, recordSetName, canonicalName } = req.body;
 
@@ -158,9 +161,9 @@ export const updateCNAMERecord = async (req, res) => {
         console.error('Failed to update CNAME Record:', error);
         return res.status(500).json({ error: 'Failed to update CNAME Record', details: error.message });
     }
-};
+});
 
-export const updateMXRecord = async (req, res) => {
+router.post("/updateMXRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, mailExchange, preference } = req.body;
 
@@ -188,10 +191,10 @@ export const updateMXRecord = async (req, res) => {
         console.error('Failed to update MX Record:', error);
         return res.status(500).json({ error: 'Failed to update MX Record', details: error.message });
     }
-};
+});
 
 
-export const updateNSRecord = async (req, res) => {
+router.post("/updateNSRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, nameServers } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -211,10 +214,10 @@ export const updateNSRecord = async (req, res) => {
         console.error('Failed to update NS Record:', error);
         return res.status(500).json({ error: 'Failed to update NS Record', details: error.message });
     }
-};
+});
 
 
-export const updateSOARecord = async (req, res) => {
+router.post("/updateSOARecord", async (req, res) => {
     try {
         const { domainName, email, refreshTime, retryTime, expireTime, minimumTTL } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -243,10 +246,10 @@ export const updateSOARecord = async (req, res) => {
         console.error('Failed to update SOA Record:', error);
         return res.status(500).json({ error: 'Failed to update SOA Record', details: error.message });
     }
-};
+});
 
 
-export const updateSRVRecord = async (req, res) => {
+router.post("/updateSRVRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, service, protocol, priority, weight, port, target } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -272,10 +275,10 @@ export const updateSRVRecord = async (req, res) => {
         console.error('Failed to update SRV Record:', error);
         return res.status(500).json({ error: 'Failed to update SRV Record', details: error.message });
     }
-};
+});
 
 
-export const updateTXTRecord = async (req, res) => {
+router.post("/updateTXTRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, textEntries } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -298,10 +301,10 @@ export const updateTXTRecord = async (req, res) => {
         console.error('Failed to update TXT Record:', error);
         return res.status(500).json({ error: 'Failed to update TXT Record', details: error.message });
     }
-};
+});
 
 
-export const deleteDnsRecord = async (req, res) => {
+router.post("/deleteRecord", async (req, res) => {
     const { recordType, recordSetName, dnsZoneName, resourceGroup } = req.body;
 
     const credentials = new DefaultAzureCredential();
@@ -314,4 +317,4 @@ export const deleteDnsRecord = async (req, res) => {
         console.error('Error deleting DNS record:', error);
         res.status(500).send({ error: 'Error deleting DNS record', details: error.message });
     }
-};
+});

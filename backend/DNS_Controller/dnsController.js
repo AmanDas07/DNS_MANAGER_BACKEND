@@ -126,6 +126,7 @@ dnsController.post("/updateAAAARecord", async (req, res) => {
     }
 });
 
+
 dnsController.post("/updateCNAMERecord", async (req, res) => {
     try {
         const { domainName, recordSetName, canonicalName } = req.body;
@@ -163,9 +164,14 @@ dnsController.post("/updateCNAMERecord", async (req, res) => {
     }
 });
 
-dnsController.post("/updateMXRecord", async (req, res) => {
+dnsController.post("/updateMXRecord", async (req, res) =>{
     try {
         const { domainName, recordSetName, mailExchange, preference } = req.body;
+
+        const numericPreference = Number(preference);
+        if (isNaN(numericPreference)) {
+            return res.status(400).json({ error: 'Invalid preference value. Please provide a number.' });
+        }
 
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
         const dnsClient = new DnsManagementClient(credentials, subscriptionId);
@@ -176,7 +182,7 @@ dnsController.post("/updateMXRecord", async (req, res) => {
             ttl,
             mxRecords: [
                 {
-                    preference: preference,
+                    preference: numericPreference,
                     exchange: mailExchange
                 }
             ]
@@ -186,7 +192,7 @@ dnsController.post("/updateMXRecord", async (req, res) => {
         const result = await dnsClient.recordSets.createOrUpdate(resourceGroup, domainName, recordSetName, 'MX', recordData);
 
         console.log('MX Record updated:', result);
-        return res.status(200).json({ message: 'MX Record updated successfully', data: result });
+        return res.status(200).json({ message: 'MX Record updated successfully', result });
     } catch (error) {
         console.error('Failed to update MX Record:', error);
         return res.status(500).json({ error: 'Failed to update MX Record', details: error.message });
@@ -217,7 +223,7 @@ dnsController.post("/updateNSRecord", async (req, res) => {
 });
 
 
-dnsController.post("/updateSOARecord", async (req, res) => {
+dnsController.post("/updateSOARecord", async (req, res) =>{
     try {
         const { domainName, email, refreshTime, retryTime, expireTime, minimumTTL } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -226,11 +232,11 @@ dnsController.post("/updateSOARecord", async (req, res) => {
         const soaRecord = {
             host: domainName,
             email: email,
-            serialNumber: new Date().getTime(),
-            refreshTime: refreshTime,
-            retryTime: retryTime,
-            expireTime: expireTime,
-            minimumTtl: minimumTTL
+            serialNumber: BigInt(new Date().getTime()).toString(10),
+            refreshTime: Number(refreshTime),
+            retryTime: Number(retryTime),
+            expireTime: Number(expireTime),
+            minimumTtl: Number(minimumTTL)
         };
 
         const recordData = {
@@ -252,13 +258,25 @@ dnsController.post("/updateSOARecord", async (req, res) => {
 dnsController.post("/updateSRVRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, service, protocol, priority, weight, port, target } = req.body;
+        const numericpriority = Number(priority);
+        if (isNaN(numericpriority)) {
+            return res.status(400).json({ error: 'Invalid preference value. Please provide a number.' });
+        }
+        const numericweight = Number(weight);
+        if (isNaN(weight)) {
+            return res.status(400).json({ error: 'Invalid preference value. Please provide a number.' });
+        }
+        const numericport = Number(port);
+        if (isNaN(port)) {
+            return res.status(400).json({ error: 'Invalid preference value. Please provide a number.' });
+        }
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
         const dnsClient = new DnsManagementClient(credentials, subscriptionId);
 
         const srvRecord = {
-            priority: priority,
-            weight: weight,
-            port: port,
+            priority: numericpriority,
+            weight: numericweight,
+            port: numericport,
             target: target
         };
 
@@ -278,7 +296,7 @@ dnsController.post("/updateSRVRecord", async (req, res) => {
 });
 
 
-dnsController.post("/updateTXTRecord", async (req, res) => {
+dnsController.post("/updateTXTRecord", async (req, res) =>{
     try {
         const { domainName, recordSetName, textEntries } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);

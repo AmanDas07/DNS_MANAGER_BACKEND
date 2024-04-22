@@ -6,7 +6,7 @@ import { requireSignin } from "../middlewares/page.js"
 
 const authController = express.Router();
 
-authController.post("/Login", async (request, response) => {
+authController.post("/Register", async (request, response) => {
 
     const name = request.body.name;
     const email = request.body.email;
@@ -68,7 +68,7 @@ authController.post("/Login", async (request, response) => {
 
 }
 )
-authController.post("/Register", async (request, response) => {
+authController.post("/Login", async (request, response) => {
 
     const email = request.body.email;
     const password = request.body.password;

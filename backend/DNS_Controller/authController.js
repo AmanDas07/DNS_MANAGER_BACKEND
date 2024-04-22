@@ -4,9 +4,9 @@ import userModel from "../models/userModel.js"
 import express from "express";
 import { requireSignin } from "../middlewares/page.js"
 
-const router = express.Router();
+const authController = express.Router();
 
-router.post("/Login", async (request, response) => {
+authController.post("/Login", async (request, response) => {
 
     const name = request.body.name;
     const email = request.body.email;
@@ -68,7 +68,7 @@ router.post("/Login", async (request, response) => {
 
 }
 )
-router.post("/Register", async (request, response) => {
+authController.post("/Register", async (request, response) => {
 
     const email = request.body.email;
     const password = request.body.password;
@@ -105,7 +105,7 @@ router.post("/Register", async (request, response) => {
 
 })
 
-router.get("/currentuser", requireSignin, async (req, res) => {
+authController.get("/currentuser", requireSignin, async (req, res) => {
 
     try {
 
@@ -121,7 +121,7 @@ router.get("/currentuser", requireSignin, async (req, res) => {
     }
 }
 )
-router.post("/forgotPassword", async (request, response) => {
+authController.post("/forgotPassword", async (request, response) => {
 
     const email = request.body.email;
     const newPassword = request.body.newPassword;
@@ -147,3 +147,5 @@ router.post("/forgotPassword", async (request, response) => {
     }
 
 })
+
+export default authController;

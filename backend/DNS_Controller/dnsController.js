@@ -5,7 +5,7 @@ import axios from 'axios';
 import express from "express";
 import { requireSignin } from "../middlewares/page.js"
 
-const router = express.Router();
+const dnsController = express.Router();
 const tenantId = process.env.AZURE_TENANT_ID;
 const clientId = process.env.AZURE_CLIENT_ID;
 const clientSecret = process.env.AZURE_PASSWORD;
@@ -13,7 +13,7 @@ const subscriptionId = process.env.AZURE_SUBSCRIPTION_ID;
 const resourceGroup = process.env.AZURE_RESOURCE_GROUP;
 const dnsZoneName = process.env.DNS_ZONE;
 
-router.post("/verifyDomain", requireSignin, async (req, res) => {
+dnsController.post("/verifyDomain", requireSignin, async (req, res) => {
     try {
         const { domainName } = req.body;
 
@@ -70,7 +70,7 @@ router.post("/verifyDomain", requireSignin, async (req, res) => {
 });
 
 
-router.post("/updateARecord", async (req, res) => {
+dnsController.post("/updateARecord", async (req, res) => {
     try {
         const { domainName, recordSetName } = req.body;
         if (!domainName) {
@@ -104,7 +104,7 @@ router.post("/updateARecord", async (req, res) => {
 
 
 
-router.post("/updateAAAARecord", async (req, res) => {
+dnsController.post("/updateAAAARecord", async (req, res) => {
     try {
         const { domainName, recordSetName, ipv6Address } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -126,7 +126,7 @@ router.post("/updateAAAARecord", async (req, res) => {
     }
 });
 
-router.post("/updateCNAMERecord", async (req, res) => {
+dnsController.post("/updateCNAMERecord", async (req, res) => {
     try {
         const { domainName, recordSetName, canonicalName } = req.body;
 
@@ -163,7 +163,7 @@ router.post("/updateCNAMERecord", async (req, res) => {
     }
 });
 
-router.post("/updateMXRecord", async (req, res) => {
+dnsController.post("/updateMXRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, mailExchange, preference } = req.body;
 
@@ -194,7 +194,7 @@ router.post("/updateMXRecord", async (req, res) => {
 });
 
 
-router.post("/updateNSRecord", async (req, res) => {
+dnsController.post("/updateNSRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, nameServers } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -217,7 +217,7 @@ router.post("/updateNSRecord", async (req, res) => {
 });
 
 
-router.post("/updateSOARecord", async (req, res) => {
+dnsController.post("/updateSOARecord", async (req, res) => {
     try {
         const { domainName, email, refreshTime, retryTime, expireTime, minimumTTL } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -249,7 +249,7 @@ router.post("/updateSOARecord", async (req, res) => {
 });
 
 
-router.post("/updateSRVRecord", async (req, res) => {
+dnsController.post("/updateSRVRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, service, protocol, priority, weight, port, target } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -278,7 +278,7 @@ router.post("/updateSRVRecord", async (req, res) => {
 });
 
 
-router.post("/updateTXTRecord", async (req, res) => {
+dnsController.post("/updateTXTRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, textEntries } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
@@ -304,7 +304,7 @@ router.post("/updateTXTRecord", async (req, res) => {
 });
 
 
-router.post("/deleteRecord", async (req, res) => {
+dnsController.post("/deleteRecord", async (req, res) => {
     const { recordType, recordSetName, dnsZoneName, resourceGroup } = req.body;
 
     const credentials = new DefaultAzureCredential();
@@ -318,3 +318,5 @@ router.post("/deleteRecord", async (req, res) => {
         res.status(500).send({ error: 'Error deleting DNS record', details: error.message });
     }
 });
+
+export default dnsController;

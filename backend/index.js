@@ -6,7 +6,7 @@ import path from 'path';
 import dotenv from 'dotenv'
 import morgan from 'morgan';
 import { fileURLToPath } from 'url';
-import authController from './DNS_Controller/authController.js'
+import authController from './DNS_Controller/authController.js';
 import dnsController from './DNS_Controller/dnsController.js'
 dotenv.config();
 

@@ -232,7 +232,7 @@ dnsController.post("/updateSOARecord", async (req, res) =>{
         const soaRecord = {
             host: domainName,
             email: email,
-            serialNumber: new Date().getTime(),
+            serialNumber: new Date().getTime() % 4294967295,
             refreshTime: Number(refreshTime),
             retryTime: Number(retryTime),
             expireTime: Number(expireTime),

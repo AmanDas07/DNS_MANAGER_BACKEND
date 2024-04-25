@@ -218,7 +218,7 @@ dnsController.post("/updateNSRecord", async (req, res) => {
         const ttl = 3600;
         const recordData = {
             ttl,
-            nsRecords: nameServers.map(ns => ({ nsdname: ns }))
+            nsRecords: nameServerArray.map(ns => ({ nsdname: ns }))
         };
 
         const result = await dnsClient.recordSets.createOrUpdate(resourceGroup, domainName, recordSetName, 'NS', recordData);

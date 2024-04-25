@@ -228,10 +228,10 @@ dnsController.post("/updateSOARecord", async (req, res) =>{
         const { domainName, email, refreshTime, retryTime, expireTime, minimumTTL } = req.body;
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
         const dnsClient = new DnsManagementClient(credentials, subscriptionId);
-
+const formattedEmail = email.replace('@', '.');
         const soaRecord = {
             host: domainName,
-            email: email,
+            email: formattedEmail,
             serialNumber: new Date().getTime() % 4294967295,
             refreshTime: Number(refreshTime),
             retryTime: Number(retryTime),

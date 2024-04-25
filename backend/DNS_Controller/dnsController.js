@@ -203,6 +203,15 @@ dnsController.post("/updateMXRecord", async (req, res) =>{
 dnsController.post("/updateNSRecord", async (req, res) => {
     try {
         const { domainName, recordSetName, nameServers } = req.body;
+    let nameServerArray;
+        if (typeof nameServers === 'string' && nameServers.includes(',')) {
+            nameServerArray = nameServers.split(",").map(ns => ns.trim());
+        } else if (typeof nameServers === 'string') {
+            nameServerArray = [nameServers.trim()];
+        } else {
+
+            return res.status(500).json({ error: ' NS Record nameServers should be multiple', details: error.message });
+        }
         const credentials = new ClientSecretCredential(tenantId, clientId, clientSecret);
         const dnsClient = new DnsManagementClient(credentials, subscriptionId);
 

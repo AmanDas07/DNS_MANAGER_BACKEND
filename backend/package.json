@@ -5,10 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "server": "nodemon index.js",
-    "client": "npm run dev --prefix client",
-    "dev": "concurrently \"npm start\" \"npm run client\"   "
+    "start": "node index.js"
   },
   "author": "Aman Das",
   "license": "ISC",
